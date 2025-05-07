@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>记录详情</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .json-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .output-display {
+            white-space: pre-wrap;
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h2>记录详情</h2>
+    <a href="/history" class="btn btn-primary mb-4">返回历史记录</a>
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col">
+                    <strong>记录 ID:</strong> {{ record[0] }}
+                </div>
+                <div class="col text-end">
+                    <strong>创建时间:</strong> {{ record[3] }}
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <h4>输入参数</h4>
+            <div id="recordInput" class="json-display">{{ record[1] }}</div>
+            
+            <h4>输出结果</h4>
+            <div class="output-display">{{ record[2] }}</div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <a href="/history" class="btn btn-secondary">返回</a>
+                <a href="/delete_record/{{ record[0] }}" class="btn btn-danger" 
+                   onclick="return confirm('确定要删除这条记录吗？')">删除记录</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 格式化JSON数据
+function formatJSON(jsonString) {
+    try {
+        const obj = JSON.parse(jsonString);
+        return JSON.stringify(obj, null, 2)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    } catch (e) {
+        console.error('JSON解析错误:', e);
+        return jsonString;
+    }
+}
+
+// 格式化JSON输入
+document.addEventListener('DOMContentLoaded', function() {
+    const inputElement = document.getElementById('recordInput');
+    const formatted = formatJSON(inputElement.textContent);
+    if (formatted) {
+        inputElement.innerHTML = formatted;
+    }
+});
+</script>
+</body>
+</html> 

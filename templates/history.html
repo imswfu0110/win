@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>历史记录</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .json-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .output-display {
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .debug-info {
+            background: #fff3cd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .action-btn {
+            margin-right: 5px;
+        }
+        .btn-display {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h2>历史记录</h2>
+    <a href="/" class="btn btn-primary mb-3">返回首页</a>
+    
+    <!-- 调试信息 -->
+    <div class="debug-info">
+        <p>记录总数: {{ records|length }}</p>
+        {% if records %}
+        <p>第一条记录: {{ records[0] }}</p>
+        {% endif %}
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th width="5%">ID</th>
+                <th width="35%">输入参数</th>
+                <th width="35%">输出结果</th>
+                <th width="15%">时间</th>
+                <th width="10%">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            <tr>
+                <td>{{ record[0] }}</td>
+                <td>
+                    <div class="json-display" id="input-{{ record[0] }}">{{ record[1] }}</div>
+                </td>
+                <td>
+                    <div class="output-display">{{ record[2] }}</div>
+                </td>
+                <td>{{ record[3] }}</td>
+                <td>
+                    <a href="/display_record/{{ record[0] }}" class="btn btn-sm btn-display action-btn">Display</a>
+                    <a href="/delete_record/{{ record[0] }}" class="btn btn-sm btn-delete action-btn" 
+                       onclick="return confirm('确定要删除这条记录吗？')">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if not records %}
+        <p>暂无历史记录。</p>
+    {% endif %}
+</div>
+
+<script>
+// 格式化JSON数据
+function formatJSON(jsonString) {
+    try {
+        const obj = JSON.parse(jsonString);
+        return JSON.stringify(obj, null, 2)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    } catch (e) {
+        console.error('JSON解析错误:', e);
+        return jsonString;
+    }
+}
+
+// 格式化所有JSON输入
+document.addEventListener('DOMContentLoaded', function() {
+    const jsonElements = document.querySelectorAll('.json-display');
+    jsonElements.forEach(element => {
+        const formatted = formatJSON(element.textContent);
+        if (formatted) {
+            element.innerHTML = formatted;
+        }
+    });
+
+    // 显示调试信息（按需打开）
+    const debugInfo = document.querySelector('.debug-info');
+    if (debugInfo) {
+        debugInfo.style.display = 'none'; // 改为none隐藏调试信息
+    }
+});
+</script>
+</body>
+</html> 

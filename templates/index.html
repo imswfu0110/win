@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>An Optimal Samples Selection System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #fafbfc; }
+        .title-area { 
+            text-align: center; 
+            padding: 20px; 
+            background: #007bff; 
+            color: white; 
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .main-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            max-width: 1200px; 
+            margin: auto;
+            gap: 20px;
+        }
+        .params-area { 
+            flex: 1; 
+            min-width: 300px; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .lists-area { 
+            flex: 2; 
+            min-width: 400px; 
+            display: flex; 
+            gap: 20px;
+        }
+        .list-container {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .list-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+        .scrollable-list {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+        .buttons-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .action-button {
+            padding: 12px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            min-width: 120px;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .action-button.execute { background: #007bff; }
+        .action-button.store { background: #6c757d; }
+        .action-button.clear { background: #dc3545; }
+        .action-button.print { background: #fd7e14; }
+        .action-button.next { background: #28a745; }
+        input, button { padding: 10px; margin: 8px 0; width: 100%; box-sizing: border-box; font-size: 1em; }
+        label { display: block; margin-bottom: 2px; }
+        .note { color: #888; font-size: 0.95em; margin-bottom: 10px; }
+        .error { color: #d00; font-size: 0.95em; margin-bottom: 10px; }
+        .submit-btn { 
+            background: #007bff; 
+            color: #fff; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            transition: background 0.2s; 
+            padding: 12px;
+            font-weight: bold;
+        }
+        .submit-btn:hover { background: #0056b3; }
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            .lists-area { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<!-- 1. 系统标题区 -->
+<div class="title-area">
+    <h1>An Optimal Samples Selection System</h1>
+</div>
+
+<div class="main-container">
+    <!-- 参数输入区 -->
+    <div class="params-area">
+        <h2 style="margin-top:0">参数设置</h2>
+        <a href=" " style="display:block;margin-bottom:15px;color:#007bff;">查看历史记录</a >
+        <!-- 切换按钮 -->
+        <div style="text-align:right;margin-bottom:10px;">
+            <button type="button" id="toggleInputMode" class="action-button" style="width:auto;background:#fd7e14;">切换为手动填写</button>
+        </div>
+        <form method="post" id="algoForm" autocomplete="off" oninput="validateForm()">
+            <label>m: <input type="number" id="m" name="m" min="1" max="100" required> <span class="note">（整数，m ≥ n，且 m ≤ 100）</span></label>
+            <label>n: <input type="number" id="n" name="n" min="1" max="100" required> <span class="note">（整数，1 ≤ n ≤ m）</span></label>
+            <label>k: <input type="number" id="k" name="k" min="1" max="100" required> <span class="note">（整数，1 ≤ k ≤ n）</span></label>
+            <label>j: <input type="number" id="j" name="j" min="1" max="100" required> <span class="note">（整数，1 ≤ j ≤ n）</span></label>
+            <label>s: <input type="number" id="s" name="s" min="1" max="100" required> <span class="note">（整数，1 ≤ s ≤ j）</span></label>
+            <label>at_least: <input type="number" id="at_least" name="at_least" min="1" max="100" required> <span class="note">（每个k组合至少包含的s子集数）</span></label>
+            <!-- 手动输入样本区，默认隐藏 -->
+            <div id="manualInputArea" style="display:none;">
+                <label>手动输入样本（用英文逗号分隔）:
+                    <input type="text" id="manualSamples" name="manualSamples" placeholder="如：1,2,3,4,5,6,7,8">
+                </label>
+            </div>
+            <div id="errorMsg" class="error"></div>
+            <button type="submit" class="submit-btn" id="submitBtn">提交</button>
+        </form>
+    </div>
+
+    <!-- 2. 两个滚动列表区 -->
+    <div class="lists-area">
+        <!-- Value Input 列表 -->
+        <div class="list-container">
+            <div class="list-title">Value Input</div>
+            <div class="scrollable-list" id="valueInputList">
+                {% if result and result.data_n %}
+                    <p>随机选取的{{ result.n }}个样本：</p >
+                    <ul>
+                        {% for value in result.data_n %}
+                            <li>{{ value }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>尚未生成样本数据</p >
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Result 列表 -->
+        <div class="list-container">
+            <div class="list-title">Result</div>
+            <div class="scrollable-list" id="resultList">
+                {% if result %}
+                    <p><b>总组合数：</b>{{ result.num }}</p >
+                    <p><b>耗时：</b>{{ result.duration }} 秒</p >
+                    <pre>{{ result.anstr }}</pre>
+                {% else %}
+                    <p>尚未生成结果</p >
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. 操作按钮区 -->
+<div class="buttons-area">
+    <button class="action-button execute" id="executeBtn">Execute</button>
+    <button class="action-button store" id="storeBtn">Store</button>
+    <button class="action-button clear" id="clearBtn">Clear</button>
+    <button class="action-button print" id="printBtn">Print</button>
+    <button class="action-button next" id="nextBtn">Next</button>
+</div>
+
+<script>
+let isManual = false;
+document.getElementById('toggleInputMode').onclick = function() {
+    isManual = !isManual;
+    if (isManual) {
+        document.getElementById('manualInputArea').style.display = '';
+        document.getElementById('m').parentElement.style.display = 'none';
+        document.getElementById('n').parentElement.style.display = 'none';
+        this.textContent = '切换为随机生成';
+    } else {
+        document.getElementById('manualInputArea').style.display = 'none';
+        document.getElementById('m').parentElement.style.display = '';
+        document.getElementById('n').parentElement.style.display = '';
+        this.textContent = '切换为手动填写';
+    }
+};
+
+function validateForm() {
+    const m = parseInt(document.getElementById('m').value) || 0;
+    const n = parseInt(document.getElementById('n').value) || 0;
+    const k = parseInt(document.getElementById('k').value) || 0;
+    const j = parseInt(document.getElementById('j').value) || 0;
+    const s = parseInt(document.getElementById('s').value) || 0;
+    const at_least = parseInt(document.getElementById('at_least').value) || 0;
+    let error = '';
+    if (!(m >= n && m <= 100)) error += 'm 必须满足 m ≥ n 且 m ≤ 100。<br>';
+    if (!(n >= 1 && n <= m)) error += 'n 必须满足 1 ≤ n ≤ m。<br>';
+    if (!(k >= 1 && k <= n)) error += 'k 必须满足 1 ≤ k ≤ n。<br>';
+    if (!(j >= 1 && j <= n)) error += 'j 必须满足 1 ≤ j ≤ n。<br>';
+    if (!(s >= 1 && s <= j)) error += 's 必须满足 1 ≤ s ≤ j。<br>';
+    if (!(at_least >= 1 && at_least <= 100)) error += 'at_least 必须满足 1 ≤ at_least ≤ 100。<br>';
+    document.getElementById('errorMsg').innerHTML = error;
+    document.getElementById('submitBtn').disabled = error.length > 0;
+}
+
+// 按钮功能实现
+document.addEventListener('DOMContentLoaded', function() {
+    // Execute按钮 - 触发表单提交
+    document.getElementById('executeBtn').addEventListener('click', function() {
+        document.getElementById('algoForm').submit();
+    });
+    
+    // Store按钮 - 保存到数据库
+    document.getElementById('storeBtn').addEventListener('click', function() {
+        window.location.href = '/store';
+    });
+    
+    // Clear按钮 - 清空当前界面
+    document.getElementById('clearBtn').addEventListener('click', function() {
+        document.getElementById('algoForm').reset();
+        document.getElementById('valueInputList').innerHTML = '<p>尚未生成样本数据</p >';
+        document.getElementById('resultList').innerHTML = '<p>尚未生成结果</p >';
+    });
+    
+    // Print按钮 - 打印结果
+    document.getElementById('printBtn').addEventListener('click', function() {
+        window.print();
+    });
+    
+    // Next按钮 - 跳转到历史记录
+    document.getElementById('nextBtn').addEventListener('click', function() {
+        window.location.href = '/history';
+    });
+});
+
+window.onload = validateForm;
+</script>
+</body>
+</html>
