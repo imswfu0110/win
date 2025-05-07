@@ -2,7 +2,7 @@
 echo 开始打包优化样本选择系统...
 
 rem 安装所需依赖
-pip install pyinstaller flask
+pip install pyinstaller flask sqlalchemy werkzeug jinja2
 
 rem 清理之前的构建文件
 rmdir /s /q build dist

@@ -6,34 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background: #fafbfc; }
-        .title-area { 
-            text-align: center; 
-            padding: 20px; 
-            background: #007bff; 
-            color: white; 
+        .title-area {
+            text-align: center;
+            padding: 20px;
+            background: #007bff;
+            color: white;
             margin-bottom: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .main-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            max-width: 1200px; 
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1200px;
             margin: auto;
             gap: 20px;
         }
-        .params-area { 
-            flex: 1; 
-            min-width: 300px; 
-            background: white; 
-            padding: 20px; 
+        .params-area {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .lists-area { 
-            flex: 2; 
-            min-width: 400px; 
-            display: flex; 
+        .lists-area {
+            flex: 2;
+            min-width: 400px;
+            display: flex;
             gap: 20px;
         }
         .list-container {
@@ -95,13 +95,13 @@
         label { display: block; margin-bottom: 2px; }
         .note { color: #888; font-size: 0.95em; margin-bottom: 10px; }
         .error { color: #d00; font-size: 0.95em; margin-bottom: 10px; }
-        .submit-btn { 
-            background: #007bff; 
-            color: #fff; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            transition: background 0.2s; 
+        .submit-btn {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
             padding: 12px;
             font-weight: bold;
         }
@@ -122,17 +122,17 @@
     <!-- 参数输入区 -->
     <div class="params-area">
         <h2 style="margin-top:0">参数设置</h2>
-        <a href=" " style="display:block;margin-bottom:15px;color:#007bff;">查看历史记录</a >
+        查看历史记录
         <!-- 切换按钮 -->
         <div style="text-align:right;margin-bottom:10px;">
             <button type="button" id="toggleInputMode" class="action-button" style="width:auto;background:#fd7e14;">切换为手动填写</button>
         </div>
         <form method="post" id="algoForm" autocomplete="off" oninput="validateForm()">
-            <label>m: <input type="number" id="m" name="m" min="1" max="100" required> <span class="note">（整数，m ≥ n，且 m ≤ 100）</span></label>
-            <label>n: <input type="number" id="n" name="n" min="1" max="100" required> <span class="note">（整数，1 ≤ n ≤ m）</span></label>
-            <label>k: <input type="number" id="k" name="k" min="1" max="100" required> <span class="note">（整数，1 ≤ k ≤ n）</span></label>
-            <label>j: <input type="number" id="j" name="j" min="1" max="100" required> <span class="note">（整数，1 ≤ j ≤ n）</span></label>
-            <label>s: <input type="number" id="s" name="s" min="1" max="100" required> <span class="note">（整数，1 ≤ s ≤ j）</span></label>
+            <label>m: <input type="number" id="m" name="m" min="1" max="100" required> <span class="note">（45 ≤ m ≤ 53）</span></label>
+            <label>n: <input type="number" id="n" name="n" min="1" max="100" required> <span class="note">（7 ≤ n ≤ 25）</span></label>
+            <label>k: <input type="number" id="k" name="k" min="1" max="100" required> <span class="note">（4 ≤ k ≤ 7）</span></label>
+            <label>j: <input type="number" id="j" name="j" min="1" max="100" required> <span class="note">（3 ≤ s ≤ j ≤ k）</span></label>
+            <label>s: <input type="number" id="s" name="s" min="1" max="100" required> <span class="note">（3 ≤ s ≤ 7）</span></label>
             <label>at_least: <input type="number" id="at_least" name="at_least" min="1" max="100" required> <span class="note">（每个k组合至少包含的s子集数）</span></label>
             <!-- 手动输入样本区，默认隐藏 -->
             <div id="manualInputArea" style="display:none;">
@@ -163,7 +163,7 @@
                 {% endif %}
             </div>
         </div>
-        
+
         <!-- Result 列表 -->
         <div class="list-container">
             <div class="list-title">Result</div>
@@ -214,11 +214,11 @@ function validateForm() {
     const s = parseInt(document.getElementById('s').value) || 0;
     const at_least = parseInt(document.getElementById('at_least').value) || 0;
     let error = '';
-    if (!(m >= n && m <= 100)) error += 'm 必须满足 m ≥ n 且 m ≤ 100。<br>';
-    if (!(n >= 1 && n <= m)) error += 'n 必须满足 1 ≤ n ≤ m。<br>';
-    if (!(k >= 1 && k <= n)) error += 'k 必须满足 1 ≤ k ≤ n。<br>';
-    if (!(j >= 1 && j <= n)) error += 'j 必须满足 1 ≤ j ≤ n。<br>';
-    if (!(s >= 1 && s <= j)) error += 's 必须满足 1 ≤ s ≤ j。<br>';
+    if (!(m >= n && m <= 100)) error += 'm 必须介于 45 到 53 之间。<br>';
+    if (!(n >= 1 && n <= m)) error += 'n 必须介于 7 到 25 之间。<br>';
+    if (!(k >= 1 && k <= n)) error += 'k 必须介于 4 到 7 之间。<br>';
+    if (!(j >= 1 && j <= n)) error += 'j 必须满足 3 ≤ s ≤ j ≤ k。<br>';
+    if (!(s >= 1 && s <= j)) error += 's 必须介于 3 到 7 之间。<br>';
     if (!(at_least >= 1 && at_least <= 100)) error += 'at_least 必须满足 1 ≤ at_least ≤ 100。<br>';
     document.getElementById('errorMsg').innerHTML = error;
     document.getElementById('submitBtn').disabled = error.length > 0;
@@ -230,24 +230,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('executeBtn').addEventListener('click', function() {
         document.getElementById('algoForm').submit();
     });
-    
+
     // Store按钮 - 保存到数据库
     document.getElementById('storeBtn').addEventListener('click', function() {
         window.location.href = '/store';
     });
-    
+
     // Clear按钮 - 清空当前界面
     document.getElementById('clearBtn').addEventListener('click', function() {
         document.getElementById('algoForm').reset();
         document.getElementById('valueInputList').innerHTML = '<p>尚未生成样本数据</p >';
         document.getElementById('resultList').innerHTML = '<p>尚未生成结果</p >';
     });
-    
+
     // Print按钮 - 打印结果
     document.getElementById('printBtn').addEventListener('click', function() {
         window.print();
     });
-    
+
     // Next按钮 - 跳转到历史记录
     document.getElementById('nextBtn').addEventListener('click', function() {
         window.location.href = '/history';

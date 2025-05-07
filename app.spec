@@ -3,21 +3,20 @@
 block_cipher = None
 
 a = Analysis(
-    ['app_launcher.py'],
+    ['app_launcher.py'],  # 使用launcher作为入口点
     pathex=[],
     binaries=[],
     datas=[
-        ('templates', 'templates'),
-        ('static', 'static'),
-        ('*.db', '.'),  # 包含数据库文件（如果存在）
+        ('templates', 'templates'),  # 包含模板文件夹
+        ('ai_project.db', '.'),      # 包含数据库文件
     ],
     hiddenimports=[
         'flask',
+        'werkzeug',
+        'jinja2',
+        'sqlalchemy',
         'algo',
         'db_connect',
-        'concurrent.futures',
-        'itertools',
-        'sqlite3',
     ],
     hookspath=[],
     hooksconfig={},
@@ -29,7 +28,11 @@ a = Analysis(
     noarchive=False,
 )
 
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+pyz = PYZ(
+    a.pure, 
+    a.zipped_data,
+    cipher=block_cipher
+)
 
 exe = EXE(
     pyz,
@@ -51,4 +54,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='NONE'
 ) 
