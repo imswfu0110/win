@@ -2,9 +2,19 @@ import sqlite3
 import os
 import time
 import random
+import sys
 
 def get_app_data_dir():
     """获取应用数据目录"""
+    # 首先检查exe所在目录
+    if getattr(sys, 'frozen', False):
+        # 如果是打包后的exe
+        exe_dir = os.path.dirname(sys.executable)
+        db_path = os.path.join(exe_dir, 'ai_project.db')
+        if os.path.exists(db_path):
+            return exe_dir
+    
+    # 如果exe目录下没有数据库，则使用用户目录
     app_dir = os.path.join(os.path.expanduser("~"), ".optimal_samples_app")
     if not os.path.exists(app_dir):
         os.makedirs(app_dir)
